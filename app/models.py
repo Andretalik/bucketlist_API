@@ -9,7 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120))
     password_encrypt = db.Column(db.String(200))
-    bucketlist = db.Relationship('Bucketlist', backref='user')
+    bucketlist = db.relationship('Bucketlist', backref='user')
 
     def save(self):
         db.session.add(self)
