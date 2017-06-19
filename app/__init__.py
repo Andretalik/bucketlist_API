@@ -8,6 +8,8 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
+    """This function creates the actual application to be used and consumed
+    within the API"""
     from app.models import Bucketlist
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
@@ -17,6 +19,8 @@ def create_app(config_name):
 
     @app.route('/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():
+        """This function does the actual creation of the bucketlist within the
+        API"""
         if request.method == "POST":
             name = str(request.data.get('name', ''))
             if name:
@@ -49,6 +53,8 @@ def create_app(config_name):
 
     @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     def bucketlist_management(id, **kwargs):
+        """This function handles all the management functions of the bucketlist
+        """
         bucketlist = Bucketlist.query.filter_by(id=id).first()
         if not bucketlist:
             abort(404)
