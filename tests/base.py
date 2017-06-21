@@ -5,7 +5,7 @@ from app.models import User
 
 
 class BaseTestCase(unittest.TestCase):
-    """This is the base confiuration aganist which all tests will run"""
+    """This is the base configuration aganist which all tests will run"""
 
     def setUp(self):
         self.app = create_app(config_name='testing')
@@ -22,22 +22,14 @@ class BaseTestCase(unittest.TestCase):
         db.session.commit()
 
     def set_header(self):
-        """set header e.g Authorization and Content type"""
+        """Sets the headers i.e: Authorization and Content type"""
 
         response = self.client.post('/auth/login', data=json.dumps(dict(
-                                        username='jimmy',
-                                        password='python')),
+                                        username='andretalik',
+                                        password='Trololololol')),
                                     content_type='application/json')
         data = json.loads(response.data.decode())
-
-        # A Token is needed to restrict access to certain resources
-        # If not included it will result in a 401: Unauthorized Access error.
-
         self.token = data['auth_token']
-
-        # # Helps json to accept a JSON encoded entity from the request body.
-        # # Token prefix comes before the token
-
         return{'Authorization': 'Token ' + self.token,
                'Content-Type': 'application/json',
                'Accept': 'application/json',
