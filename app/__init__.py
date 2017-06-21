@@ -6,6 +6,7 @@ from instance.config import app_config
 
 db = SQLAlchemy()
 
+from app.models import User
 
 def create_app(config_name):
     """This function creates the actual application to be used and consumed
@@ -16,6 +17,17 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
+
+    @app.route('/auth/register', methods=['POST'])
+    def register():
+        """This function registers the user who will create the bucketlists"""
+        name = str(request.data.get('name', ''))
+        if name:
+            user = User(name=name)
+            user.save()
+            response = jsonify({'msg':  "User has been created successfully"})
+            response.status_code = 201
+            return response
 
     @app.route('/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():

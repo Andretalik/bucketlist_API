@@ -2,20 +2,11 @@ import unittest
 import os
 import json
 from app import create_app, db
+from tests.base import BaseTestCase
 
 
-class BucketlistTestCase(unittest.TestCase):
+class BucketlistTestCase(BaseTestCase):
     """This class represents the bucketlist test case"""
-
-    def setUp(self):
-        """Define the test variables as well and set up the client for the app
-        and initilaize the app itself"""
-        self.app = create_app(config_name="testing")
-        self.client = self.app.test_client
-        self.bucketlist = {'name': 'Go to Ibiza for Vacation'}
-
-        with self.app.app_context():
-            db.create_all()
 
     def test_bucketlist_creation(self):
         """Test if the API creates a bucketlist POST request"""
