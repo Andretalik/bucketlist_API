@@ -1,4 +1,4 @@
-from tests.base_test import BaseTestCase
+from tests.base import BaseTestCase
 
 URL_Login = '/auth/login'
 URL_register = '/auth/register'
