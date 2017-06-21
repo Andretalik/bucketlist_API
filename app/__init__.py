@@ -8,6 +8,7 @@ db = SQLAlchemy()
 
 from app.models import User
 
+
 def create_app(config_name):
     """This function creates the actual application to be used and consumed
     within the API"""
@@ -22,11 +23,39 @@ def create_app(config_name):
     def register():
         """This function registers the user who will create the bucketlists"""
         name = str(request.data.get('name', ''))
+        email = str(request.data.get('email', ''))
+        password = str(request.data.get('password', ''))
         if name:
-            user = User(name=name)
-            user.save()
-            response = jsonify({'msg':  "User has been created successfully"})
-            response.status_code = 201
+            if User.query.filter_by(name=name).first():
+                response = jsonify({'msg': "Username unavailable"})
+                response.status_code = 200
+                return response
+            if email:
+                if User.query.filter_by(email=email).first():
+                    response = jsonify({'msg': "Email already in use"})
+                    response.status_code = 200
+                    return response
+                if password:
+                    user = User(name=name, email=email, password=password)
+                    user.save()
+                    response = jsonify({'msg':
+                                        "User has been created successfully"})
+                    response.status_code = 201
+                    return response
+                else:
+                    response = jsonify({'msg':
+                                        "User must have a password"})
+                    response.status_code = 200
+                    return response
+            else:
+                response = jsonify({'msg':
+                                    "User must have an email"})
+                response.status_code = 200
+                return response
+        else:
+            response = jsonify({'msg':
+                                "User must have a username"})
+            response.status_code = 200
             return response
 
     @app.route('/bucketlists/', methods=['POST', 'GET'])
@@ -59,6 +88,8 @@ def create_app(config_name):
                     'date_modified': bucketlist.date_modified
                 }
                 results.append(obj)
+            if len(results) < 1:
+                results = {'msg': "There are no bucketlists in the system"}
             response = jsonify(results)
             response.status_code = 200
             return response
