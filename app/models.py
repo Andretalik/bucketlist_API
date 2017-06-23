@@ -8,14 +8,14 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False, unique=True)
+    username = db.Column(db.String(120), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(200), nullable=False)
     bucketlist = db.relationship('Bucketlist', backref='users')
 
-    def __init__(self, name=None, email=None, password=None):
+    def __init__(self, username=None, email=None, password=None):
         """Initialize the parameters belonging to the user"""
-        self.name = name
+        self.username = username
         self.email = email
         self.password = Bcrypt().generate_password_hash(password).decode()
 
