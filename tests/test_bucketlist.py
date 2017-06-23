@@ -1,21 +1,10 @@
 import unittest
-import os
 import json
-from app import create_app, db
+from tests.base import BaseTestCase
 
 
-class BucketlistTestCase(unittest.TestCase):
+class BucketlistTestCase(BaseTestCase):
     """This class represents the bucketlist test case"""
-
-    def setUp(self):
-        """Define the test variables as well and set up the client for the app
-        and initilaize the app itself"""
-        self.app = create_app(config_name="testing")
-        self.client = self.app.test_client
-        self.bucketlist = {'name': 'Go to Ibiza for Vacation'}
-
-        with self.app.app_context():
-            db.create_all()
 
     def test_bucketlist_creation(self):
         """Test if the API creates a bucketlist POST request"""
@@ -36,8 +25,10 @@ class BucketlistTestCase(unittest.TestCase):
         resp1 = self.client().post('/bucketlists/', data={'name': 'Eat, Party,\
         Sleep, Repeat'})
         self.assertEqual(resp1.status_code, 201)
-        result_in_json = json.loads(resp1.data.decode('utf-8').replace("'", "\""))
-        result = self.client().get('/bucketlists/{}'.format(result_in_json['id']))
+        result_in_json = json.loads(resp1.data.decode('utf-8').
+                                    replace("'", "\""))
+        result = self.client().get('/bucketlists/{}'.
+                                   format(result_in_json['id']))
         self.assertEqual(result.status_code, 200)
         self.assertIn('Eat, Party', str(result.data))
 
@@ -62,12 +53,6 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         result = self.client().get('/bucketlists/1')
         self.assertEqual(result.status_code, 404)
-
-    def tearDown(self):
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            db.session.remove()
-            db.drop_all()
 
 
 if __name__ == "__main__":
