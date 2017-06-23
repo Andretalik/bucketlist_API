@@ -28,9 +28,6 @@ class BaseTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    # def set_header(self):
-    #     """This sets the header for Authorisation and Content type"""
-    #     reponse = self.client.post()
-    #
-if __name__ = "__main__":
+
+if __name__ == "__main__":
     unittest.main()
