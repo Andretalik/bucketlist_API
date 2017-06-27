@@ -69,7 +69,7 @@ class TestAuthenticationUsers(BaseTestCase):
         # Second registration attempt
         self.payload = {
             "username": "Androxus",
-            "email": "the@godslayer.com",
+            "email": "winter@witch.com",
             "password": "deathawaitsyouall"
         }
         # Create the user and assert the expected response
