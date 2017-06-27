@@ -20,6 +20,7 @@ class BaseTestCase(unittest.TestCase):
             password='Trololololol')
         db.session.add(test_user)
         db.session.commit()
+        self.bucketlist = {"name": "Eat, pray and love"}
 
     def set_header(self):
         """Sets the headers i.e: Authorization and Content type"""
