@@ -17,7 +17,7 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    @app.route('/bucketlists/', methods=['POST', 'GET'])
+    @app.route('api/v1/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():
         """This function does the actual creation of the bucketlist within the
         API"""
@@ -51,7 +51,7 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
-    @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    @app.route('api/v1/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     def bucketlist_management(id, **kwargs):
         """This function handles all the management functions of the bucketlist
         """
