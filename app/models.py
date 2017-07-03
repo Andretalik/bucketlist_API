@@ -1,5 +1,11 @@
 from app import db
+from app import validation_schema
 from flask_bcrypt import Bcrypt
+from marshmallow import ValidationError, fields, validates
+import re
+import os
+import jwt
+import datetime
 
 
 class User(db.Model):
@@ -18,6 +24,26 @@ class User(db.Model):
         self.username = username
         self.email = email
         self.password = Bcrypt().generate_password_hash(password).decode()
+
+    def create_access_token(uid):
+        try:
+            payload = {
+                    "exp": datetime.datetime.utcnow() +
+                    datetime.timedelta(days=0, seconds=3600),
+                    "iat": datetime.datetime.utcnow(),
+                    "sub": uid}
+            return jwt.encode(payload, os.getenv('SECRET'), algorithm='HS256')
+        except Exception as e:
+            return str(e)
+
+    def decode_access_token(token):
+        try:
+            payload = jwt.decode(token, os.getenv('SECRET'))
+            return payload["sub"]
+        except jwt.ExpiredSignatureError:
+            return "Signature expired"
+        except jwt.InvalidTokenError:
+            return "Invalid token"
 
     def save(self):
         db.session.add(self)
@@ -72,3 +98,33 @@ class Item(db.Model):
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
     done = db.Column(db.Boolean, default=False)
+
+
+class UserSchema(validation_schema.ModelSchema):
+    class Meta:
+        model = User
+    email = fields.Email(required=True)
+
+    @validates('username')
+    def validate_username(self, username):
+        if username == "":
+            raise ValidationError("User must have a username")
+        elif not re.match("^[A-Za-z0-9]+$", username):
+            raise ValidationError("Invalid username.")
+
+    @validates("password")
+    def validate_password(self, password):
+        if password == "":
+            raise ValidationError("User must have a password")
+        elif not re.match("^[A-Za-z0-9]+$", password):
+            raise ValidationError("Invalid password.")
+
+
+class BucketlistSchema(validation_schema.ModelSchema):
+    class Meta:
+        model = Bucketlist
+
+
+class ItemSchema(validation_schema.ModelSchema):
+    class Meta:
+        model = Item
