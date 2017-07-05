@@ -122,6 +122,7 @@ def create_app(config_name):
             response.status_code = 401
         return username
 
+
     @app.route('/api/v1/bucketlists', methods=['POST', 'GET'])
     @check_token
     def bucketlists():
@@ -158,6 +159,7 @@ def create_app(config_name):
             response = jsonify(results)
             response.status_code = 200
             return response
+
 
     @app.route('/api/v1/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     @check_token
