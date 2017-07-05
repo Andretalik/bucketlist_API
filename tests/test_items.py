@@ -12,7 +12,7 @@ class BucketlistItems(BaseTestCase):
         }
 
         # Attempt creation of item then assert the expected status_code
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
         self.assertEqual(response.status_code, 201)
@@ -26,7 +26,7 @@ class BucketlistItems(BaseTestCase):
         }
 
         # Attempt creation of item then assert the expected status_code
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
         self.assertEqual(response.status_code, 400)
@@ -40,7 +40,7 @@ class BucketlistItems(BaseTestCase):
         }
 
         # Attempt creation of item then assert the expected status_code
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
         self.assertEqual(response.status_code, 400)
@@ -54,7 +54,7 @@ class BucketlistItems(BaseTestCase):
             "bucketlist_owner": 1
         }
         # Attempt creation of item
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
         self.payload = {
@@ -62,7 +62,7 @@ class BucketlistItems(BaseTestCase):
             "bucketlist_owner": 1
         }
         # Attempt creation of item then assert the expected status_code
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
         self.assertEqual(response.status_code, 409)
@@ -75,7 +75,7 @@ class BucketlistItems(BaseTestCase):
             "bucketlist_owner": 67
         }
         # Attempt creation of item then assert the expected status_code
-        response = self.client().post("api/v1/bucketlists/67/items/",
+        response = self.client.post("api/v1/bucketlists/67/items/",
                                       data=self.payload,
                                       headers=self.header)
         self.assertEqual(response.status_code, 404)
@@ -88,7 +88,7 @@ class BucketlistItems(BaseTestCase):
             "bucketlist_owner": 1
         }
         # Attempt creation of item
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
 
@@ -97,7 +97,7 @@ class BucketlistItems(BaseTestCase):
             "done": 1
         }
         # Attempt updation of item then assert the expected status_code
-        response = self.client().put("api/v1/bucketlists/1/items/1",
+        response = self.client.put("api/v1/bucketlists/1/items/1",
                                      data=self.payload,
                                      headers=self.header)
         self.assertEqual(response.status_code, 200)
@@ -110,7 +110,7 @@ class BucketlistItems(BaseTestCase):
         }
 
         # Attempt updation of item then assert the expected status_code
-        response = self.client().put("api/v1/bucketlists/1/items/26091997",
+        response = self.client.put("api/v1/bucketlists/1/items/26091997",
                                      data=self.payload,
                                      headers=self.header)
 
@@ -125,12 +125,12 @@ class BucketlistItems(BaseTestCase):
             "bucketlist_owner": 1
         }
         # Attempt creation of item
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
 
         # Attempt deletion of item and assert expected status_code
-        response = self.client().delete("api/v1/bucketlists/1/items/1",
+        response = self.client.delete("api/v1/bucketlists/1/items/1",
                                         headers=self.header)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Item deleted successfully", str(response.data))
@@ -142,12 +142,12 @@ class BucketlistItems(BaseTestCase):
             "bucketlist_owner": 1
         }
         # Attempt creation of item
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
 
         # Attempt deletion of item and assert expected status_code
-        response = self.client().delete("api/v1/bucketlists/1/items/041346",
+        response = self.client.delete("api/v1/bucketlists/1/items/041346",
                                         headers=self.header)
         self.assertEqual(response.status_code, 404)
         self.assertIn("Cannot delete what  does not exist", str(response.data))
@@ -159,7 +159,7 @@ class BucketlistItems(BaseTestCase):
             "bucketlist_owner": 1
         }
         # Attempt creation of item
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
 
@@ -168,7 +168,7 @@ class BucketlistItems(BaseTestCase):
             "done": 1
         }
         # Attemot update of status then assert the expected status_code
-        response = self.client().put("api/v1/bucketlists/1/items/1",
+        response = self.client.put("api/v1/bucketlists/1/items/1",
                                      data=self.payload,
                                      headers=self.header)
         self.assertEqual(response.status_code, 200)
@@ -181,7 +181,7 @@ class BucketlistItems(BaseTestCase):
             "bucketlist_owner": 1
         }
         # Attempt creation of item
-        response = self.client().post("api/v1/bucketlists/1/items/",
+        response = self.client.post("api/v1/bucketlists/1/items/",
                                       data=self.payload,
                                       headers=self.header)
 
@@ -190,7 +190,7 @@ class BucketlistItems(BaseTestCase):
             "done": 1
         }
         # Attemot update of status then assert the expected status_code
-        response = self.client().put("api/v1/bucketlists/1/items/1",
+        response = self.client.put("api/v1/bucketlists/1/items/1",
                                      data=self.payload,
                                      headers=self.header)
         self.assertEqual(response.status_code, 200)
@@ -201,7 +201,7 @@ class BucketlistItems(BaseTestCase):
             "done": 0
         }
         # Attemot update of status then assert the expected status_code
-        response = self.client().put("api/v1/bucketlists/1/items/1",
+        response = self.client.put("api/v1/bucketlists/1/items/1",
                                      data=self.payload,
                                      headers=self.header)
         self.assertEqual(response.status_code, 200)
