@@ -8,6 +8,7 @@ class BaseTestCase(unittest.TestCase):
     """This is the base configuration aganist which all tests will run"""
 
     def setUp(self):
+        """This prepares all the necessary variables for use during testing"""
         self.app = create_app(config_name='testing')
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -29,9 +30,9 @@ class BaseTestCase(unittest.TestCase):
                                         username='andretalik',
                                         password='Trololololol')),
                                     content_type='application/json')
-        data = json.loads(response.data.decode())
-        self.token = data['auth_token']
-        return{'Authorization': 'Token ' + self.token,
+        self.token = bytes(response.headers.get("Authorization").
+                           split(" ")[1], "utf-8")
+        return{'Authorization': 'Bearer ' + self.token,
                'Content-Type': 'application/json',
                'Accept': 'application/json',
                }
