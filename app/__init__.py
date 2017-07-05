@@ -121,7 +121,7 @@ def create_app(config_name):
             response.status_code = 401
         return username
 
-    @app.route('/bucketlists', methods=['POST', 'GET'])
+    @app.route('api/v1/bucketlists', methods=['POST', 'GET'])
     @check_token
     def bucketlists():
         """This function does the actual creation of the bucketlist within the
@@ -158,7 +158,7 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
-    @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    @app.route('api/v1/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     @check_token
     def bucketlist_management(id, **kwargs):
         """This function handles all the management functions of the bucketlist
