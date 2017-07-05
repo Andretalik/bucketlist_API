@@ -1,7 +1,7 @@
 from tests.base import BaseTestCase
 
-URL_Login = '/auth/login'
-URL_register = '/auth/register'
+url_Login = '/auth/login'
+url_register = '/auth/register'
 
 
 class TestAuthenticationUsers(BaseTestCase):
@@ -16,7 +16,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "nosepiercing"
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
         self.assertEqual(response.status_code, 201)
         self.assertIn("User created succesfully", str(response.data))
 
@@ -28,7 +28,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "yo, fella"
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn("User must have a username", str(response.data))
 
@@ -40,7 +40,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "androxus"
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn("User must have an email", str(response.data))
 
@@ -52,7 +52,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": ""
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn("User must have a password", str(response.data))
 
@@ -64,7 +64,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "AAAchooo!"
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
 
         # Second registration attempt
         self.payload = {
@@ -73,7 +73,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "deathawaitsyouall"
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
 
         self.assertEqual(response.status_code, 409)
         self.assertIn("Email already in use", str(response.data))
@@ -87,7 +87,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "hunkerdown"
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
 
         # Second registration attempt
         self.payload = {
@@ -96,7 +96,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "hunkerdown"
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
 
         self.assertEqual(response.status_code, 409)
         self.assertIn("Username unavailable", str(response.data))
@@ -110,7 +110,7 @@ class TestAuthenticationUsers(BaseTestCase):
         }
 
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn("Invalid username", str(response.data))
 
@@ -122,7 +122,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "doomshroom"
         }
         # Create the user and assert the expected response
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn("Invalid email", str(response.data))
 
@@ -134,7 +134,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "nosepiercing"
         }
         # Create the user and register the user
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
 
         self.payload = {
             "username": "muguru",
@@ -142,7 +142,7 @@ class TestAuthenticationUsers(BaseTestCase):
         }
 
         # Attempt login then assert expected status code
-        response = self.client().post(URL_Login, data=self.payload)
+        response = self.client().post(url_Login, data=self.payload)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Login success", str(response.data))
 
@@ -153,7 +153,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "password"
         }
         # Attempt login then assert expected status code
-        response = self.client().post(URL_Login, data=self.payload)
+        response = self.client().post(url_Login, data=self.payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn("Username required for login", str(response.data))
 
@@ -164,7 +164,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "tryandrun"
         }
         # Attempt login then assert expected status code
-        response = self.client().post(URL_Login, data=self.payload)
+        response = self.client().post(url_Login, data=self.payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn("Unregistered email.", str(response.data))
 
@@ -175,7 +175,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": ""
         }
         # Attempt login then assert expected status code
-        response = self.client().post(URL_Login, data=self.payload)
+        response = self.client().post(url_Login, data=self.payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn("Password is mandatory for login", str(response.data))
 
@@ -187,7 +187,7 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "nosepiercing"
         }
         # Create the user and register the user
-        response = self.client().post(URL_register, data=self.payload)
+        response = self.client().post(url_register, data=self.payload)
 
         self.payload = {
             "username": "muguru",
@@ -195,7 +195,7 @@ class TestAuthenticationUsers(BaseTestCase):
         }
 
         # Attempt login then assert expected status code
-        response = self.client().post(URL_Login, data=self.payload)
+        response = self.client().post(url_Login, data=self.payload)
 
         self.assertEqual(response.status_code, 400)
         self.assertIn("Invalid password or username", str(response.data))
