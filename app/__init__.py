@@ -46,9 +46,13 @@ def create_app(config_name):
                 if user_id and isinstance(user_id, int):
                     return func(*args, **kwargs)
                 else:
-                    return jsonify({"msg": "Access denied."})
+                    response = jsonify({"msg": "Access denied."})
+                    response.status_code = 401
+                    return response
             else:
-                return jsonify({"msg": "Access denied."})
+                response = jsonify({"msg": "Access denied."})
+                response.status_code = 401
+                return response
         return required_token
 
     @app.route('/auth/register', methods=['POST'])
@@ -60,21 +64,20 @@ def create_app(config_name):
         if username:
             if User.query.filter_by(username=username).first():
                 response = jsonify({'msg': "Username unavailable"})
-                response.status_code = 200
+                response.status_code = 409
                 return response
             if email:
                 if User.query.filter_by(email=email).first():
                     response = jsonify({'msg': "Email already in use"})
-                    response.status_code = 200
+                    response.status_code = 409
                     return response
                 if password:
-                    print(username, email, password)
                     errors = UserSchema().validate({"username": username,
                                                     "email": email,
                                                     "password": password},
                                                    partial=True)
                     if errors:
-                        return jsonify(errors)
+                        return jsonify(errors), 400
                     user = User(username=username, email=email,
                                 password=password)
                     user.save()
@@ -85,17 +88,17 @@ def create_app(config_name):
                 else:
                     response = jsonify({'msg':
                                         "User must have a password"})
-                    response.status_code = 200
+                    response.status_code = 400
                     return response
             else:
                 response = jsonify({'msg':
                                     "User must have an email"})
-                response.status_code = 200
+                response.status_code = 400
                 return response
         else:
             response = jsonify({'msg':
                                 "User must have a username"})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
     @app.route('/auth/login', methods=['POST'])
@@ -109,19 +112,27 @@ def create_app(config_name):
                                            "password": password},
                                            partial=True)
             if errors:
-                return errors
+                return errors, 400
 
+        else:
+            response = jsonify({
+                            "msg": "Username and password must be provided"})
+            response.status_code = 400
+            return response
         user = User.query.filter_by(username=username).first()
         if user:
             if Bcrypt().check_password_hash(user.password, password):
                 access_token = User.create_access_token(user.id)
                 return jsonify({"msg": "Login successful",
                                 "token": access_token.decode()})
+            else:
+                response = jsonify({"msg": "Username or password invalid."})
+                response.status_code = 401
+                return response
         else:
             response = jsonify({"msg": "Username and password invalid."})
             response.status_code = 401
-        return username
-
+            return response
 
     @app.route('/api/v1/bucketlists', methods=['POST', 'GET'])
     @check_token
