@@ -1,6 +1,6 @@
 from tests.base import BaseTestCase
 
-url_Login = '/auth/login'
+url_login = '/auth/login'
 url_register = '/auth/register'
 
 
@@ -18,14 +18,14 @@ class TestAuthenticationUsers(BaseTestCase):
         # Create the user and assert the expected response
         response = self.client.post(url_register, data=self.payload)
         self.assertEqual(response.status_code, 201)
-        self.assertIn("User created succesfully", str(response.data))
+        self.assertIn("User has been created successfully", str(response.data))
 
     def test_user_registration_no_username(self):
         """Test if API does not register a user without username (POST)"""
         self.payload = {
             "username": "",
             "email": "lenovo@exam.com",
-            "password": "yo, fella"
+            "password": "yofella"
         }
         # Create the user and assert the expected response
         response = self.client.post(url_register, data=self.payload)
@@ -61,10 +61,11 @@ class TestAuthenticationUsers(BaseTestCase):
         self.payload = {
             "username": "Evie",
             "email": "winter@witch.com",
-            "password": "AAAchooo!"
+            "password": "AAAchooo"
         }
         # Create the user and assert the expected response
         response = self.client.post(url_register, data=self.payload)
+        self.assertEqual(response.status_code, 201)
 
         # Second registration attempt
         self.payload = {
@@ -124,7 +125,7 @@ class TestAuthenticationUsers(BaseTestCase):
         # Create the user and assert the expected response
         response = self.client.post(url_register, data=self.payload)
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Invalid email", str(response.data))
+        self.assertIn("Not a valid email address", str(response.data))
 
     def test_user_login_successful(self):
         """Test API successfully logs in a user (POST)"""
@@ -142,7 +143,7 @@ class TestAuthenticationUsers(BaseTestCase):
         }
 
         # Attempt login then assert expected status code
-        response = self.client.post(url_Login, data=self.payload)
+        response = self.client.post(url_login, data=self.payload)
         self.assertEqual(response.status_code, 200)
         self.assertIn("Login success", str(response.data))
 
@@ -153,9 +154,9 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "password"
         }
         # Attempt login then assert expected status code
-        response = self.client.post(url_Login, data=self.payload)
+        response = self.client.post(url_login, data=self.payload)
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Username required for login", str(response.data))
+        self.assertIn("Invalid username", str(response.data))
 
     def test_unregistered_user_login(self):
         """Test API does not log in an unregistered user (POST)"""
@@ -164,9 +165,9 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": "tryandrun"
         }
         # Attempt login then assert expected status code
-        response = self.client.post(url_Login, data=self.payload)
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Unregistered email.", str(response.data))
+        response = self.client.post(url_login, data=self.payload)
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("Username and password invalid", str(response.data))
 
     def test_user_login_no_password(self):
         """Test API does not log in a user without a password(POST)"""
@@ -175,9 +176,10 @@ class TestAuthenticationUsers(BaseTestCase):
             "password": ""
         }
         # Attempt login then assert expected status code
-        response = self.client.post(url_Login, data=self.payload)
+        response = self.client.post(url_login, data=self.payload)
         self.assertEqual(response.status_code, 400)
-        self.assertIn("Password is mandatory for login", str(response.data))
+        self.assertIn("Username and password must be provided",
+                      str(response.data))
 
     def test_user_login_bad_password(self):
         """Test API does not log in a user if password is wrong(POST)"""
@@ -195,7 +197,7 @@ class TestAuthenticationUsers(BaseTestCase):
         }
 
         # Attempt login then assert expected status code
-        response = self.client.post(url_Login, data=self.payload)
+        response = self.client.post(url_login, data=self.payload)
 
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Invalid password or username", str(response.data))
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("Username or password invalid", str(response.data))
