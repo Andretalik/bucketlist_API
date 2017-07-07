@@ -152,6 +152,10 @@ def create_app(config_name):
                 })
                 response.status_code = 201
                 return response
+            else:
+                response = jsonify({"msg": "Bucketlist must have a name"})
+                response.status_code = 400
+                return response
         else:
             # GET
             bucketlists = Bucketlist.get_all()
