@@ -1,4 +1,3 @@
-
 from app import create_app, db
 import unittest
 import json
@@ -14,6 +13,7 @@ class BaseTestCase(unittest.TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
+        db.drop_all()
         db.create_all()
         self.client = self.app.test_client()
         test_user = User(
@@ -22,21 +22,15 @@ class BaseTestCase(unittest.TestCase):
             password='Trololololol')
         db.session.add(test_user)
         db.session.commit()
+        self.payload = dict(username="andretalik",
+                            password="Trololololol")
+        response = self.client.post('/auth/login', data=self.payload)
+        rmessage = json.loads(response.data.decode("utf-8"))
+        self.token = rmessage["token"]
         self.bucketlist = {"name": "Eat, pray and love"}
-
-    def set_header(self):
-        """Sets the headers i.e: Authorization and Content type"""
-
-        response = self.client.post('/auth/login', data=json.dumps(dict(
-                                        username='andretalik',
-                                        password='Trololololol')),
-                                    content_type='application/json')
-        self.token = bytes(response.headers.get("Authorization").
-                           split(" ")[1], "utf-8")
-        return{'Authorization': 'Bearer ' + self.token,
-               'Content-Type': 'application/json',
-               'Accept': 'application/json',
-               }
+        self.headers = {'Authorization': 'Bearer ' + self.token,
+                        'Accept': 'application/json'
+                        }
 
     def tearDown(self):
         """teardown all initialized variables."""
