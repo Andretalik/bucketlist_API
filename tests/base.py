@@ -27,12 +27,13 @@ class BaseTestCase(unittest.TestCase):
         response = self.client.post('/auth/login', data=self.payload)
         rmessage = json.loads(response.data.decode("utf-8"))
         self.token = rmessage["token"]
-        self.bucketlist = {"name": "Eat, pray and love"}
+        self.bucketlist = {"name": "Eat pray"}
         self.headers = {'Authorization': 'Bearer ' + self.token,
                         'Accept': 'application/json'
                         }
         resp = self.client.post('/api/v1/bucketlists', headers=self.headers,
                                 data=self.bucketlist)
+        self.assertEqual(resp.status_code, 201)
 
     def tearDown(self):
         """teardown all initialized variables."""
