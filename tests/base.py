@@ -31,10 +31,11 @@ class BaseTestCase(unittest.TestCase):
         self.headers = {'Authorization': 'Bearer ' + self.token,
                         'Accept': 'application/json'
                         }
+        resp = self.client.post('/api/v1/bucketlists', headers=self.headers,
+                                data=self.bucketlist)
 
     def tearDown(self):
         """teardown all initialized variables."""
-
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
