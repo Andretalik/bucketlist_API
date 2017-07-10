@@ -243,18 +243,27 @@ def create_app(config_name):
         if request.method == "POST":
             name = str(request.data.get('name', ''))
             if name:
-                item = Item(name=name, bucketlist_owner=id)
-                item.save()
-                response = jsonify({
-                    'id': item.id,
-                    'bucketlist_owner': id,
-                    'item_name': item.name,
-                    'date_created': item.date_created,
-                    'date_modified': item.date_modified,
-                    'done': item.done
-                })
-                response.status_code = 201
-                return response
+                errors = ItemSchema().validate({"name": name})
+                if errors:
+                    return errors, 400
+                else:
+                    if Item.query.filter_by(name=name).first():
+                        response = jsonify({"msg": "Item already in bucketlist"})
+                        response.status_code = 409
+                        return response
+                    else:
+                        item = Item(name=name, bucketlist_owner=id)
+                        item.save()
+                        response = jsonify({
+                            'id': item.id,
+                            'bucketlist_owner': id,
+                            'item_name': item.name,
+                            'date_created': item.date_created,
+                            'date_modified': item.date_modified,
+                            'done': item.done
+                        })
+                        response.status_code = 201
+                        return response
             else:
                 response = jsonify({"msg": "Item must have a name"})
                 response.status_code = 400
@@ -265,9 +274,44 @@ def create_app(config_name):
             response.status_code = 405
             return response
 
-    # @app.route('/api/v1/bucketlists/<int:id>/items/<int:id>', methods='GET',
-    #             'PUT', 'DELETE')
-    # @check_token
-    # def item_manipulation(id, )
+    @app.route('/api/v1/bucketlists/<int:bucketlist_id>/items/<int:item_id>',
+               methods=['GET', 'PUT', 'DELETE'])
+    @check_token
+    def item_manipulation(bucketlist_id, item_id, *kwargs):
+        """This functions covers all the manipulation operations concerning
+        items"""
+        bucketlist = Bucketlist.query.filter_by(id=bucketlist_id).first()
+        if not bucketlist:
+            abort(404)
+
+        item = Item.query.filter_by(id=item_id).first()
+        if not item:
+            abort(404)
+
+        if request.method == 'DELETE':
+            item.delete()
+            return {"message": "The item {} has been successfully deleted"
+                    .format(item.id)}, 200
+
+        elif request.method == 'PUT':
+            name = str(request.data.get('name', ''))
+            done = str(request.data.get('done', ''))
+            if not name and done:
+                response = jsonify({"msg": """Name and whether done or not
+                                    required"""})
+                response.status_code = 400
+                return response
+            item.name = name
+            item.done = done
+            item.save()
+            response = jsonify({
+                'id': item.id,
+                'name': item.name,
+                'date_created': item.date_created,
+                'date_modified': item.date_modified,
+                'done': item.done,
+                'msg': "Item update success"})
+            response.status_code = 200
+            return response
 
     return app
