@@ -12,7 +12,7 @@ class BucketlistTestCase(BaseTestCase):
         resp = self.client.post('/api/v1/bucketlists', headers=self.headers,
                                 data=self.bucketlist)
         self.assertEqual(resp.status_code, 201)
-        self.assertIn('Eat, pray and love', str(resp.data))
+        self.assertIn('Eat pray', str(resp.data))
 
     def test_bucketlist_creation_with_no_name(self):
         """Test if the API creates a bucketlist with no name (POST)"""
@@ -28,12 +28,12 @@ class BucketlistTestCase(BaseTestCase):
         self.assertEqual(resp.status_code, 201)
         resp = self.client.get('/api/v1/bucketlists', headers=self.headers,)
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('Eat, pray and love', str(resp.data))
+        self.assertIn('Eat pray', str(resp.data))
 
     def test_api_get_bucketlists_by_id(self):
         """Test API GET single bucketlist by id"""
         resp1 = self.client.post('/api/v1/bucketlists', headers=self.headers,
-                                 data={'name': 'Eat, Party, Sleep, Repeat'})
+                                 data={'name': 'Eat Sleep Repeat'})
         self.assertEqual(resp1.status_code, 201)
         result_in_json = json.loads(resp1.data.decode('utf-8').
                                     replace("'", "\""))
@@ -41,25 +41,23 @@ class BucketlistTestCase(BaseTestCase):
                                  format(result_in_json['id']),
                                  headers=self.headers)
         self.assertEqual(result.status_code, 200)
-        self.assertIn('Eat, Party', str(result.data))
+        self.assertIn('Eat Sleep', str(result.data))
 
     def test_bucketlist_can_be_edited(self):
         """Test API can edit existing bucketlist. PUT request"""
-        resp1 = self.client.post('/api/v1/bucketlists', data={"name": "Eat, pray,\
-        love"}, headers=self.headers)
+        resp1 = self.client.post('/api/v1/bucketlists', data={"name": "Eat Sleep"}, headers=self.headers)
         self.assertEqual(resp1.status_code, 201)
-        resp1 = self.client.put('/api/v1/bucketlists/1', data={'name': "Dont just eat\
-        but also pray and love."}, headers=self.headers)
+        resp1 = self.client.put('/api/v1/bucketlists/1', data={'name': "Eat also Pray Love"}, headers=self.headers)
         self.assertEqual(resp1.status_code, 200)
         result = self.client.get('/api/v1/bucketlists/1', headers=self.headers)
         self.assertEqual(result.status_code, 200)
-        self.assertIn("Dont just eat", str(result.data))
+        self.assertIn("Eat also Pray Love", str(result.data))
 
     def test_bucketlist_deletion(self):
         """Test API deletes an existing bucketlist. (DELETE request)"""
         rv = self.client.post(
             '/api/v1/bucketlists',
-            data={'name': 'Eat, pray and love'}, headers=self.headers)
+            data={'name': 'Eat Pray Love'}, headers=self.headers)
         self.assertEqual(rv.status_code, 201)
         res = self.client.delete('/api/v1/bucketlists/1', headers=self.headers)
         self.assertEqual(res.status_code, 200)
