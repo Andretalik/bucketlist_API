@@ -135,7 +135,8 @@ class UserSchema(validation_schema.ModelSchema):
         if password == "":
             raise ValidationError("User must have a password")
         elif not re.match("^[A-Za-z0-9]+$", password):
-            raise ValidationError("Invalid password.")
+            raise ValidationError("""Invalid password. Does not accept special
+            characters""")
 
 
 class BucketlistSchema(validation_schema.ModelSchema):
@@ -146,7 +147,7 @@ class BucketlistSchema(validation_schema.ModelSchema):
     def validate_name(self, name):
         if name == "":
             raise ValidationError("Bucketlist must have a name")
-        elif not re.match("^[A-Za-z0-9]+\s?[A-Za-z0-9]+$", name):
+        elif not re.match("^[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+$", name):
             raise ValidationError("Invalid name.")
 
 
@@ -158,5 +159,5 @@ class ItemSchema(validation_schema.ModelSchema):
     def validate_name(self, name):
         if name == "":
             raise ValidationError("Item must have a name")
-        elif not re.match("^[A-Za-z0-9]+\s?[A-Za-z0-9]+$", name):
+        elif not re.match("^[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+$", name):
             raise ValidationError("Invalid name.")
