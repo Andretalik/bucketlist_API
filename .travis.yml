@@ -4,11 +4,12 @@ python:
 install:
     - "pip install -r requirements.txt"
     - "pip install coveralls"
+    - pip install nose
+    - pip install coverage
 before_script:
- - psql -c 'create database test_db' -U postgres
+  - sudo -u postgres createdb test_db
+# command to run the tests
 script:
   - nosetests --with-coverage
-after_success: coveralls
-cache: pip
-env:
-  - DB=postgres
+after_script:
+  - sudo -u postgres dropdb test_db
