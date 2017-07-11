@@ -32,13 +32,16 @@ class User(db.Model):
                     datetime.timedelta(days=0, seconds=3600),
                     "iat": datetime.datetime.utcnow(),
                     "sub": uid}
-            return jwt.encode(payload, os.getenv('SECRET'), algorithm='HS256')
+            return jwt.encode(payload, os.getenv('SECRET')or
+                              'this-is-very-secret',
+                              algorithm='HS256')
         except Exception as e:
             return str(e)
 
     def decode_access_token(token):
         try:
-            payload = jwt.decode(token, os.getenv('SECRET'))
+            payload = jwt.decode(token, os.getenv('SECRET')or
+                                 'this-is-very-secret')
             return payload["sub"]
         except jwt.ExpiredSignatureError:
             return "Signature expired"
@@ -62,6 +65,8 @@ class Bucketlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     creator = db.Column(db.Integer, db.ForeignKey('users.id'))
+    items = db.relationship('Item', backref='bucketlists',
+                            cascade='all, delete-orphan', lazy='dynamic')
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
@@ -99,8 +104,25 @@ class Item(db.Model):
                               onupdate=db.func.current_timestamp())
     done = db.Column(db.Boolean, default=False)
 
+    def __init__(self, name, bucketlist_owner):
+        """Initialize with name"""
+        self.name = name
+        self.bucketlist_owner = bucketlist_owner
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<Item: {}>".format(self.name)
+
 
 class UserSchema(validation_schema.ModelSchema):
+    """This is the validation class"""
     class Meta:
         model = User
     email = fields.Email(required=True)
@@ -117,14 +139,31 @@ class UserSchema(validation_schema.ModelSchema):
         if password == "":
             raise ValidationError("User must have a password")
         elif not re.match("^[A-Za-z0-9]+$", password):
-            raise ValidationError("Invalid password.")
+            raise ValidationError("""Invalid password. Does not accept special
+            characters""")
 
 
 class BucketlistSchema(validation_schema.ModelSchema):
+    """This is the validation class"""
     class Meta:
         model = Bucketlist
 
+    @validates('name')
+    def validate_name(self, name):
+        if name == "":
+            raise ValidationError("Bucketlist must have a name")
+        elif not re.match("^[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+$", name):
+            raise ValidationError("Invalid name.")
+
 
 class ItemSchema(validation_schema.ModelSchema):
+    """This is the validation class"""
     class Meta:
         model = Item
+
+    @validates('name')
+    def validate_name(self, name):
+        if name == "":
+            raise ValidationError("Item must have a name")
+        elif not re.match("^[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+\s?[A-Za-z0-9]+$", name):
+            raise ValidationError("Invalid name.")

@@ -10,13 +10,13 @@ from instance.config import app_config
 db = SQLAlchemy()
 validation_schema = Marshmallow()
 
-from app.models import User, UserSchema
+from app.models import User, UserSchema, BucketlistSchema, ItemSchema
 
 
 def create_app(config_name):
     """This function creates the actual application to be used and consumed
     within the API"""
-    from app.models import Bucketlist
+    from app.models import Bucketlist, Item
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
@@ -28,6 +28,12 @@ def create_app(config_name):
     def unknown_page(e):
         response = jsonify({"error": "Resource not found"})
         response.status_code = 404
+        return response
+
+    @app.errorhandler(405)
+    def invalid_method(e):
+        response = jsonify({"error": "Method not allowed"})
+        response.status_code = 405
         return response
 
     @app.errorhandler(500)
@@ -142,6 +148,9 @@ def create_app(config_name):
         if request.method == "POST":
             name = str(request.data.get('name', ''))
             if name:
+                errors = BucketlistSchema().validate({"name": name})
+                if errors:
+                    return errors, 400
                 bucketlist = Bucketlist(name=name)
                 bucketlist.save()
                 response = jsonify({
@@ -175,8 +184,8 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
-
-    @app.route('/api/v1/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    @app.route('/api/v1/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE']
+               )
     @check_token
     def bucketlist_management(id, **kwargs):
         """This function handles all the management functions of the bucketlist
@@ -187,7 +196,7 @@ def create_app(config_name):
 
         if request.method == 'DELETE':
             bucketlist.delete()
-            return {"message": "The bucketlist {} has been succesfully"
+            return {"message": "The bucketlist {} has been successfully deleted"
                     .format(bucketlist.id)}, 200
 
         elif request.method == 'PUT':
@@ -203,11 +212,105 @@ def create_app(config_name):
             return response
 
         else:  # GET
+            items = Item.query.filter_by(bucketlist_owner=id)
+            itemlist = []
+
+            for item in items:
+                obj = {
+                    'id': item.id,
+                    'item_name': item.name,
+                    'date_created': item.date_created,
+                    'date_modified': item.date_modified,
+                    'done': item.done
+                }
+                itemlist.append(obj)
+            if len(itemlist) < 1:
+                itemlist = "No items to display"
             response = jsonify({
                 'id': bucketlist.id,
                 'name': bucketlist.name,
+                'items': itemlist,
                 'date_created': bucketlist.date_created,
                 'date_modified': bucketlist.date_modified})
+            response.status_code = 200
+            return response
+
+    @app.route('/api/v1/bucketlists/<int:id>/items', methods=['POST', 'GET'])
+    @check_token
+    def item_creation(id, *kwargs):
+        """This function does the actual creation of the item within the
+        bucketlist"""
+        if request.method == "POST":
+            name = str(request.data.get('name', ''))
+            if name:
+                errors = ItemSchema().validate({"name": name})
+                if errors:
+                    return errors, 400
+                else:
+                    if Item.query.filter_by(name=name).first():
+                        response = jsonify({"msg": "Item already in bucketlist"})
+                        response.status_code = 409
+                        return response
+                    else:
+                        item = Item(name=name, bucketlist_owner=id)
+                        item.save()
+                        response = jsonify({
+                            'id': item.id,
+                            'bucketlist_owner': id,
+                            'item_name': item.name,
+                            'date_created': item.date_created,
+                            'date_modified': item.date_modified,
+                            'done': item.done
+                        })
+                        response.status_code = 201
+                        return response
+            else:
+                response = jsonify({"msg": "Item must have a name"})
+                response.status_code = 400
+                return response
+
+        else:
+            response = jsonify({"msg": "Method not allowed"})
+            response.status_code = 405
+            return response
+
+    @app.route('/api/v1/bucketlists/<int:bucketlist_id>/items/<int:item_id>',
+               methods=['GET', 'PUT', 'DELETE'])
+    @check_token
+    def item_manipulation(bucketlist_id, item_id, *kwargs):
+        """This functions covers all the manipulation operations concerning
+        items"""
+        bucketlist = Bucketlist.query.filter_by(id=bucketlist_id).first()
+        if not bucketlist:
+            abort(404)
+
+        item = Item.query.filter_by(id=item_id).first()
+        if not item:
+            abort(404)
+
+        if request.method == 'DELETE':
+            item.delete()
+            return {"message": "The item {} has been successfully deleted"
+                    .format(item.id)}, 200
+
+        elif request.method == 'PUT':
+            name = str(request.data.get('name', ''))
+            done = str(request.data.get('done', ''))
+            if not name and done:
+                response = jsonify({"msg": """Name and whether done or not
+                                    required"""})
+                response.status_code = 400
+                return response
+            item.name = name
+            item.done = done
+            item.save()
+            response = jsonify({
+                'id': item.id,
+                'name': item.name,
+                'date_created': item.date_created,
+                'date_modified': item.date_modified,
+                'done': item.done,
+                'msg': "Item update success"})
             response.status_code = 200
             return response
 
