@@ -122,6 +122,7 @@ class Item(db.Model):
 
 
 class UserSchema(validation_schema.ModelSchema):
+    """This is the validation class"""
     class Meta:
         model = User
     email = fields.Email(required=True)
@@ -143,6 +144,7 @@ class UserSchema(validation_schema.ModelSchema):
 
 
 class BucketlistSchema(validation_schema.ModelSchema):
+    """This is the validation class"""
     class Meta:
         model = Bucketlist
 
@@ -155,6 +157,7 @@ class BucketlistSchema(validation_schema.ModelSchema):
 
 
 class ItemSchema(validation_schema.ModelSchema):
+    """This is the validation class"""
     class Meta:
         model = Item
 
