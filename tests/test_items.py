@@ -147,7 +147,7 @@ class BucketlistItems(BaseTestCase):
             "name": "Hit 12 headshots",
             "done": "1"
         }
-        # Attemot update of status then assert the expected status_code
+        # Attempt update of status then assert the expected status_code
         response = self.client.put("api/v1/bucketlists/1/items/1",
                                    data=self.payload, headers=self.headers)
         response_done = json.loads(response.data.decode("utf-8"))
@@ -168,7 +168,7 @@ class BucketlistItems(BaseTestCase):
             "name": "Fix my faulty knee",
             "done": 1
         }
-        # Attemot update of status then assert the expected status_code
+        # Attempt update of status then assert the expected status_code
         response = self.client.put("api/v1/bucketlists/1/items/1",
                                    data=self.payload, headers=self.headers)
         response_done = json.loads(response.data.decode("utf-8"))
@@ -176,12 +176,12 @@ class BucketlistItems(BaseTestCase):
         self.assertIn("True", str(response_done['done']))
 
         self.payload = {
-            "name": "Fix my faulty knee",
-            "done": 0
+            "name": "Fix my faulty knees",
+            "done": "0"
         }
-        # Attemot update of status then assert the expected status_code
+        # Attempt update of status then assert the expected status_code
         response = self.client.put("api/v1/bucketlists/1/items/1",
                                    data=self.payload, headers=self.headers)
-        response_done = json.loads(response.data.decode("utf-8"))
+        response_done1 = json.loads(response.data.decode("utf-8"))
         self.assertEqual(response.status_code, 200)
-        self.assertIn("False", str(response_done['done']))
+        self.assertIn("False", str(response_done1['done']))
