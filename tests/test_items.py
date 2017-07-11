@@ -153,35 +153,3 @@ class BucketlistItems(BaseTestCase):
         response_done = json.loads(response.data.decode("utf-8"))
         self.assertEqual(response.status_code, 200)
         self.assertIn("True", str(response_done['done']))
-
-    # def test_item_undone_status_change(self):
-    #     """Test API updates if item has not been done(PUT)"""
-    #     self.payload = {
-    #         "name": "Fix my faulty knee"
-    #     }
-    #     # Attempt creation of item
-    #     response = self.client.post("api/v1/bucketlists/1/items",
-    #                                 data=self.payload, headers=self.headers)
-    #     self.assertEqual(response.status_code, 201)
-    #
-    #     self.payload = {
-    #         "name": "Fix my faulty knee",
-    #         "done": 1
-    #     }
-    #     # Attempt update of status then assert the expected status_code
-    #     response = self.client.put("api/v1/bucketlists/1/items/1",
-    #                                data=self.payload, headers=self.headers)
-    #     response_done = json.loads(response.data.decode("utf-8"))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn("True", str(response_done['done']))
-    #
-    #     self.payload = {
-    #         "name": "Fix my faulty knees",
-    #         "done": "0"
-    #     }
-    #     # Attempt update of status then assert the expected status_code
-    #     response = self.client.put("api/v1/bucketlists/1/items/1",
-    #                                data=self.payload, headers=self.headers)
-    #     response_done1 = json.loads(response.data.decode("utf-8"))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn("False", str(response_done1['done']))
