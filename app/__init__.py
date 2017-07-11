@@ -1,7 +1,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, url_for
 from functools import wraps
 from flask_bcrypt import Bcrypt
 from instance.config import app_config
@@ -145,17 +145,22 @@ def create_app(config_name):
     def bucketlists():
         """This function does the actual creation of the bucketlist within the
         API"""
+        if request.headers.get("Authorization"):
+            token = bytes(request.headers.get("Authorization").
+                          split(" ")[1], "utf-8")
+            user_id = User.decode_access_token(token)
         if request.method == "POST":
             name = str(request.data.get('name', ''))
             if name:
                 errors = BucketlistSchema().validate({"name": name})
                 if errors:
                     return errors, 400
-                bucketlist = Bucketlist(name=name)
+                bucketlist = Bucketlist(name=name, creator=user_id)
                 bucketlist.save()
                 response = jsonify({
                     'id': bucketlist.id,
                     'name': bucketlist.name,
+                    'creator': bucketlist.creator,
                     'date_created': bucketlist.date_created,
                     'date_modified': bucketlist.date_modified
                 })
@@ -167,10 +172,17 @@ def create_app(config_name):
                 return response
         else:
             # GET
-            bucketlists = Bucketlist.get_all()
+            page_no = request.args.get('page_no', 1)
+            limit = request.args.get('limit', 20)
+            q = request.args.get('q', "")
+
+            bucketlists = Bucketlist.query.filter_by(creator=user_id).filter(
+                Bucketlist.name.like('%{}%'.format(q))).paginate(int(page_no),
+                                                                 int(limit))
+
             results = []
 
-            for bucketlist in bucketlists:
+            for bucketlist in bucketlists.items:
                 obj = {
                     'id': bucketlist.id,
                     'name': bucketlist.name,
@@ -178,6 +190,14 @@ def create_app(config_name):
                     'date_modified': bucketlist.date_modified
                 }
                 results.append(obj)
+            previous = {'prev': url_for(request.endpoint, page_no=bucketlists.
+                                        prev_num, limit=limit, _external=True)
+                        if bucketlists.has_prev else None}
+            nxt = {'next': url_for(request.endpoint, page_no=bucketlists.
+                                   next_num, limit=limit, _external=True)
+                   if bucketlists.has_next else None}
+            results.append(previous)
+            results.append(nxt)
             if len(results) < 1:
                 results = {'msg': "There are no bucketlists in the system"}
             response = jsonify(results)
