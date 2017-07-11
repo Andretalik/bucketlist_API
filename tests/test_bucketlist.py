@@ -26,9 +26,19 @@ class BucketlistTestCase(BaseTestCase):
         resp = self.client.post('/api/v1/bucketlists', headers=self.headers,
                                 data=self.bucketlist)
         self.assertEqual(resp.status_code, 201)
-        resp = self.client.get('/api/v1/bucketlists', headers=self.headers,)
+        resp = self.client.get('/api/v1/bucketlists', headers=self.headers)
         self.assertEqual(resp.status_code, 200)
         self.assertIn('Eat pray', str(resp.data))
+
+    def test_api_get_bucketlists_by_name(self):
+        """Test that the API GETs bucketlists by name"""
+        resp = self.client.post('/api/v1/bucketlists', headers=self.headers,
+                                data=self.bucketlist)
+        self.assertEqual(resp.status_code, 201)
+        resp = self.client.get('/api/v1/bucketlists?q=Eat',
+                               headers=self.headers)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Eat', str(resp.data))
 
     def test_api_get_bucketlists_by_id(self):
         """Test API GET single bucketlist by id"""
