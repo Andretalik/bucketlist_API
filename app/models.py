@@ -71,9 +71,10 @@ class Bucketlist(db.Model):
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
                               onupdate=db.func.current_timestamp())
 
-    def __init__(self, name):
+    def __init__(self, name, creator):
         """Initialize with name"""
         self.name = name
+        self.creator = creator
 
     def save(self):
         db.session.add(self)
