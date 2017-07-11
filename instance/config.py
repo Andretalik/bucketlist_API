@@ -1,4 +1,5 @@
 import os
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
@@ -17,7 +18,8 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """Configurations for Testing, with a separate test database."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/test_db'
+    SQLALCHEMY_DATABASE_URI = ('sqlite:///' + os.path.
+                               join(basedir, 'bucketlist_test.db'))
     DEBUG = True
 
 
