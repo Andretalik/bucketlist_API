@@ -32,16 +32,14 @@ class User(db.Model):
                     datetime.timedelta(days=0, seconds=3600),
                     "iat": datetime.datetime.utcnow(),
                     "sub": uid}
-            return jwt.encode(payload, os.getenv('SECRET')or
-                              'this-is-very-secret',
+            return jwt.encode(payload, os.getenv('SECRET'),
                               algorithm='HS256')
         except Exception as e:
             return str(e)
 
     def decode_access_token(token):
         try:
-            payload = jwt.decode(token, os.getenv('SECRET')or
-                                 'this-is-very-secret')
+            payload = jwt.decode(token, os.getenv('SECRET'))
             return payload["sub"]
         except jwt.ExpiredSignatureError:
             return "Signature expired"
