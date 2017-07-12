@@ -1,7 +1,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from flask import request, jsonify, abort, url_for
+from flask import request, jsonify, abort, url_for, render_template
 from functools import wraps
 from flask_bcrypt import Bcrypt
 from instance.config import app_config
@@ -60,6 +60,10 @@ def create_app(config_name):
                 response.status_code = 401
                 return response
         return required_token
+
+    @app.route('/')
+    def index():
+        return render_template('docs.html')
 
     @app.route('/auth/register', methods=['POST'])
     def register():
