@@ -177,8 +177,8 @@ def create_app(config_name):
             q = request.args.get('q', "")
 
             bucketlists = Bucketlist.query.filter_by(creator=user_id).filter(
-                Bucketlist.name.like('%{}%'.format(q))).paginate(int(page_no),
-                                                                 int(limit))
+                Bucketlist.name.ilike('%{}%'.format(q))).paginate(int(page_no),
+                                                                  int(limit))
             if not bucketlists:
                 abort(404)
 
