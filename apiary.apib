@@ -1,80 +1,284 @@
 FORMAT: 1A
 HOST: http://polls.apiblueprint.org/
 
-# goals-bucketlist
+# Goals-bucketlist
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Goals-bucketlist is a simple API allowing consumers to create bucket-lists and their respective items.
 
-## Questions Collection [/questions]
+The features attached to the service include:
+* registering logging in and authenticating a user
+* creating new bucket-list items
+* updating and deleting the items
+* retrieving a list of all created bucket lists by a registered user.
 
-### List All Questions [GET]
 
-+ Response 200 (application/json)
+## User Authentication
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+### Registration [/auth/register]
+### Register a new user [POST]
+You may use any username, email or password combination for the registration.
+The username and email must be unique to the
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "username": "Andretalik",
+            "email": "someone@example.com",
+            "password": "WOOOO"
         }
 
 + Response 201 (application/json)
 
+        {
+              'msg': "User has been created successfully"
+        }
+
+### Login [/auth/login/]
+### Log in a user [POST]
+
+Use your correct password and username combination to verify your identity.
+Do take note of the token returned on successful login as it will be required
+to access other resources.
+
++ Request (application/json)
+
+        {
+            "username": "Andretalik",
+            "password": "WOOOO"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "msg": "Login successful",
+            "token": "a_very_long_string_of_characters"}
+        }
+
+## Group Resources
+
+### Bucket-list Resources [/api/v1/bucketlists]
+
+### Create a new bucket-list [POST]
+Add a new bucket-list
+
++ Request (application/json)
+
     + Headers
 
-            Location: /questions/2
+            Authorization: JWT Token
+            Accept: application/json
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+                "name": "Master Androxus"
             }
+
++ Response 201 (application/json)
+
+        {
+                'id': 1,
+                'name': Master Androxus,
+                'date_created': Wed, 12 July 2017 10:58:33 -0000,
+                'date_modified': Wed, 12 July 2017 10:58:33 -0000
+        }
+
++ Response 400 (application/json)
+
+        {
+            "msg": "Bucketlist must have a name"
+        }
+
+### List all bucket-lists [GET]
+Retrieve all bucket-lists belonging to logged in user.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: JWT Token
+            Accept: application/json
+
++ Response 200 (application/json)
+
+        {
+                'id': 1,
+                'name': Master Androxus,
+                'date_created': Wed, 12 July 2017 10:58:33 -0000,
+                'date_modified': Wed, 12 July 2017 10:58:33 -0000
+        }
+
++ Response 404 (application/json)
+
+        {
+            "msg": "Resource not found"
+        }
+
+
+### Single Bucket-List Resource [/bucketlists/<int:id>]
+
+## Get a single bucket-list[GET]
+
++ Parameters
+
+    + int:id (number) - ID of the required bucket-list
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: JWT Token
+            Accept: application/json
+
++ Response 200 (application/json)
+
+          {
+          'id': 1,
+          'name': Master Androxus,
+          'items': 'No items to display',
+          'date_created': Wed, 12 July 2017 10:58:33 -0000,
+          'date_modified': Wed, 12 July 2017 10:58:33 -0000
+          }
+
++ Response 404 (application/json)
+
+        {
+            "msg": "Resource not found"
+        }
+
+
+## Update a single bucket-list[PUT]
++ Parameters
+
+    + int:id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: JWT Token
+            Accept: application/json
+
+    + Body
+
+            {
+                "name": "New bucket-list name",
+            }
+
++ Response 200 (application/json)
+
+            {
+            'id': 1,
+            'name': New bucket-list name,
+            'items': 'No items to display',
+            'date_created': Wed, 12 July 2017 10:58:33 -0000,
+            'date_modified': Wed, 12 July 2017 10:58:33 -0000
+            }
+
+
+## Delete a bucketlist[DELETE]
++ Parameters
+
+    + int:id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: JWT Token
+            Accept: application/json
+
++ Response 200 (application/json)
+
+
++ Response 404 (application/json)
+
+        {
+            "msg": "Resource not found"
+        }
+
+### BucketListItem creation [/bucketlists/<int:id>/items]
+
+## Add a new bucket-list item [POST]
+Populate your bucket-lists by stating what you need to achieve.
+
++ Parameters
+
+    + int:id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: JWT Token
+            Accept: application/json
+
+    + Body
+
+            {
+                "name": "Improve auto attacks"
+            }
+
++ Response 200 (application/json)
+
+           {
+            'id': 1,
+            'bucketlist_owner': 1,
+            'item_name': Improve auto attacks,
+            'date_created': Thu, 13 July 2017 10:58:33 -0000,
+            'date_modified': Thu, 13 July 2017 10:58:33 -0000
+            'done': false
+           }
+
+### BucketListItem manipulation [/bucketlist/<int:id>/items/<int:item_id>]
+
+Use this to update the status of an item, rename it, what ever you wan tot edit. Keep it for record sake later, or even delete it.
+
++ Parameters
+
+    + int:id (number) - ID of the required bucketlist
+    + int:item_id (number) - ID of the required bucketlist item
+
+## Update a Bucketlist item [PUT]
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: JWT Token
+            Accept: application/json
+
+
+    + Body
+
+            {
+                "name": "Master Positioning"
+            }
+
++ Response 200 (application/json)
+
+        {
+        'id': 2,
+        'bucketlist_owner': 1,
+        'item_name': Master Positioning,
+        'date_created': Thu, 13 July 2017 14:58:33 -0000,
+        'date_modified': Thu, 13 July 2017 14:58:33 -0000
+        'done': false
+        }
+
+## Delete a bucketlist item [DELETE]
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: JWT Token
+            Accept: application/json
+
++ Response 200 (application/json)
+
++ Response 404 (application/json)
+
+        {
+            "msg": "Resource not found"
+        }
