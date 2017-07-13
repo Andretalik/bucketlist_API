@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://goals-bucketlist.herokuapp.com/
+HOST: http://polls.apiblueprint.org/
 
 # Goals-bucketlist
 
@@ -33,7 +33,7 @@ The username and email must be unique to the user.
               'msg': "User has been created successfully"
         }
 
-### Login [/auth/login]
+### Login [/auth/login/]
 ### Log in a user [POST]
 
 Use your correct password and username combination to verify your identity.
@@ -115,13 +115,13 @@ Retrieve all bucket-lists belonging to logged in user.
         }
 
 
-### Single Bucket-List Resource [/bucketlists/<int:id>]
+### Single Bucket-List Resource [/bucketlists/{id}]
 
 ## Get a single bucket-list[GET]
 
 + Parameters
 
-    + int:id (number) - ID of the required bucket-list
+    + id (number) - ID of the required bucket-list
 
 + Request (application/json)
 
@@ -150,7 +150,7 @@ Retrieve all bucket-lists belonging to logged in user.
 ## Update a single bucket-list[PUT]
 + Parameters
 
-    + int:id (number) - ID of the required bucketlist
+    + id (number) - ID of the required bucketlist
 
 + Request (application/json)
 
@@ -179,7 +179,7 @@ Retrieve all bucket-lists belonging to logged in user.
 ## Delete a bucketlist[DELETE]
 + Parameters
 
-    + int:id (number) - ID of the required bucketlist
+    + id (number) - ID of the required bucketlist
 
 + Request (application/json)
 
@@ -197,14 +197,14 @@ Retrieve all bucket-lists belonging to logged in user.
             "msg": "Resource not found"
         }
 
-### BucketListItem creation [/bucketlists/<int:id>/items]
+### BucketListItem creation [/bucketlists/{id}/items]
 
 ## Add a new bucket-list item [POST]
 Populate your bucket-lists by stating what you need to achieve.
 
 + Parameters
 
-    + int:id (number) - ID of the required bucketlist
+    + id (number) - ID of the required bucketlist
 
 + Request (application/json)
 
@@ -230,14 +230,14 @@ Populate your bucket-lists by stating what you need to achieve.
             'done': false
            }
 
-### BucketListItem manipulation [/bucketlist/<int:id>/items/<int:item_id>]
+### BucketListItem manipulation [/bucketlist/{b_id}/items/{item_id}]
 
 Use this to update the status of an item, rename it, what ever you wan tot edit. Keep it for record sake later, or even delete it.
 
 + Parameters
 
-    + int:id (number) - ID of the required bucketlist
-    + int:item_id (number) - ID of the required bucketlist item
+    + b_id (number) - ID of the required bucketlist
+    + item_id (number) - ID of the required bucketlist item
 
 ## Update a Bucketlist item [PUT]
 
