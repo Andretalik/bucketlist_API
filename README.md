@@ -69,6 +69,34 @@ nosetests --with-coverage
 ```
 This will return the number of tests that were run as well as the coverage.
 
+
+### Using the Application
+To use the current API, I recommend the use of Postman.
+ - To register a user:
+ <img width="1280" alt="create bucketlist" src="https://user-images.githubusercontent.com/25458764/28429085-1e822316-6d84-11e7-83c2-be150165bd7a.png">
+
+ - To login:
+ <img width="1280" alt="login" src="https://user-images.githubusercontent.com/25458764/28429184-818d0c1e-6d84-11e7-9907-95671088a1a6.png">
+
+ - To create a bucketlist:
+ <img width="1280" alt="create bucketlist" src="https://user-images.githubusercontent.com/25458764/28429208-9903aa10-6d84-11e7-8aa1-9652962cf084.png">
+
+ - To update/edit the bucketlist:
+ <img width="1280" alt="update bucketlist" src="https://user-images.githubusercontent.com/25458764/28429244-b8be1c5a-6d84-11e7-8b1c-e981f54c06e7.png">
+
+ - To delete the bucketlist:
+ <img width="1280" alt="delete bucketlist" src="https://user-images.githubusercontent.com/25458764/28429315-f4860086-6d84-11e7-81ec-e08e8ddaa9fc.png">
+
+ - To create a bucket-list item:
+ <img width="1280" alt="create bucketlist item" src="https://user-images.githubusercontent.com/25458764/28429399-345967a2-6d85-11e7-9db1-c143cd726bec.png">
+
+ - To update/edit a bucket-list item:
+ <img width="1280" alt="update bucketlist item" src="https://user-images.githubusercontent.com/25458764/28429598-eb30641c-6d85-11e7-9a3e-e29a59f42fdd.png">
+
+ - To delete a bucket-list item:
+ <img width="1280" alt="delete bucketlist item" src="https://user-images.githubusercontent.com/25458764/28429634-06438ce8-6d86-11e7-9601-3588c19b9a71.png">
+
+
 Author
 ----
 	-Adrian Andre Adero Otieno
